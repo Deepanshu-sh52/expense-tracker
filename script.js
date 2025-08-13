@@ -2,7 +2,7 @@ const transaction=[
     {
         id:1,
         name:'salary',
-        amount:-2123,
+        amount:2123,
         date:new Date(),
         type:"expense"
 
@@ -24,15 +24,47 @@ const transaction=[
 
     }
 ];
+
 const formatter= new Intl.NumberFormat('en-In',{
     style:'currency',
     currency:'INR',
     signDisplay:'always',
 });
+
+// variables
 const list=document.getElementById("transactionList");
 const currentstate=document.querySelector('#currentstate');
 const form=document.querySelector('#transactionForm');
+const balance=document.querySelector('#balance');
+const expense=document.querySelector('#expense');
+const income=document.querySelector('#income');
+
+function UpdateTotal()
+{
+    const totolincome=transaction.filter(function(transaction){
+        return transaction.type=="income"
+    }).reduce(function(total,transaction){
+          return total+transaction.amount
+    },0)
+
+    const totolexpense=transaction
+    .filter(function(transaction){
+        return transaction.type=="expense";
+    })
+    .reduce(function(total,transaction){
+          return total+transaction.amount
+    },0)
+
+
+    const totalbalance=totolincome-totolexpense;
+
+    balance.textContent=formatter.format(totalbalance);
+    income.textContent=formatter.format(totolincome);
+    expense.textContent=formatter.format(totolexpense*-1);
+}
+
 form.addEventListener('submit',addTransition);
+
 function rendorList()
 {
     list.innerHTML = "";
@@ -46,16 +78,16 @@ function rendorList()
     }
     transaction.forEach(function(transaction)
     {
+        const sign=('income'===(transaction.type))? 1 : -1;
         const li=document.createElement('li');
         li.innerHTML=`
-
            <div class="name">
            <h4>${transaction.name}</h4>
            <p>${new Date(transaction.date).toLocaleDateString()}</p>
            </div>
 
            <div class = "amount ${transaction.type}">
-             <span>${formatter.format(transaction.amount)} </span>
+             <span>${formatter.format(transaction.amount*sign)} </span>
            </div>
 
            <div class="action">
@@ -70,6 +102,7 @@ function rendorList()
     });
 }
 rendorList();
+UpdateTotal();
 
 function deleteTransition(id)
 {
@@ -82,6 +115,7 @@ function deleteTransition(id)
        transaction.splice(index,1);
     }
     rendorList();
+    UpdateTotal();
 }
 
 function addTransition(e)
@@ -94,10 +128,11 @@ function addTransition(e)
         name: formData.get("name"),
         amount:parseFloat(formData.get("amount")),
         date:new Date(formData.get("date")),
-        type: "on"===formData.get("type")?"income":"expense"
+        type: "on"===formData.get("type") ? "income"  : "expense"
        });
 
     this.reset();
 
     rendorList();
+    UpdateTotal();
 }
