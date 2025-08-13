@@ -31,6 +31,8 @@ const formatter= new Intl.NumberFormat('en-In',{
 });
 const list=document.getElementById("transactionList");
 const currentstate=document.querySelector('#currentstate');
+const form=document.querySelector('#transactionForm');
+form.addEventListener('submit',addTransition);
 function rendorList()
 {
     list.innerHTML = "";
@@ -38,6 +40,9 @@ function rendorList()
     {
         currentstate.textContent="No transaction";
         return;
+    }
+    else{
+         currentstate.textContent="";
     }
     transaction.forEach(function(transaction)
     {
@@ -54,17 +59,45 @@ function rendorList()
            </div>
 
            <div class="action">
-           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" onclick="deleteTransition(${transaction.id})">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
-
-           </div>
+          </div>
  
            `;
-
-
         list.appendChild(li);
 
     });
 }
 rendorList();
+
+function deleteTransition(id)
+{
+    alert("delete item")
+    const index=transaction.findIndex(function(transaction){
+       return transaction.id===id;
+    })
+    if(index !==-1)
+    {
+       transaction.splice(index,1);
+    }
+    rendorList();
+}
+
+function addTransition(e)
+{
+    e.preventDefault();
+    const formData=new FormData(this);
+
+    transaction.push({
+        id: transaction.length + 1,
+        name: formData.get("name"),
+        amount:parseFloat(formData.get("amount")),
+        date:new Date(formData.get("date")),
+        type: "on"===formData.get("type")?"income":"expense"
+       });
+
+    this.reset();
+
+    rendorList();
+}
