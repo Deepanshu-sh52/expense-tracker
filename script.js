@@ -1,28 +1,5 @@
 const transaction=[
-    {
-        id:1,
-        name:'salary',
-        amount:2123,
-        date:new Date(),
-        type:"expense"
-
-    },
-     {
-        id:2,
-        name:'haircut',
-        amount:21,
-        date:new Date(),
-        type:"income"
-
-    },
-     {
-        id:1,
-        name:'concert ticket',
-        amount:212,
-        date:new Date(),
-        type:"income"
-
-    }
+    
 ];
 
 const formatter= new Intl.NumberFormat('en-In',{
